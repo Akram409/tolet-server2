@@ -94,6 +94,25 @@ router.get("/flatList", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
+router.get("/flatList/:city", async (req, res) => {
+  try {
+    const city = req.params.city;
+
+    const data = await flatListCollection
+      .find({ "flatList.description.location.city": city })
+      .limit(4)
+      .toArray();
+
+    if (data.length > 0) {
+      res.status(200).json(data);
+    } else {
+      res.status(404).json({ error: "No flats found for the provided city." });
+    }
+  } catch (error) {
+    console.error("Error fetching flats by city:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
 
 router.post("/add/flatList", upload.any() , async (req, res) => {
   try {

@@ -93,6 +93,25 @@ router.get("/roommateList", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
+router.get("/roommateList/:city", async (req, res) => {
+  try {
+    const city = req.params.city;
+
+    const data = await roommateListCollection
+      .find({ "roomateList.description.location.city": city })
+      .limit(4)
+      .toArray();
+
+    if (data.length > 0) {
+      res.status(200).json(data);
+    } else {
+      res.status(404).json({ error: "No roommate lists found for the provided city." });
+    }
+  } catch (error) {
+    console.error("Error fetching roommate lists by city:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
 
 router.get("/roommate", async (req, res) => {
   try {
